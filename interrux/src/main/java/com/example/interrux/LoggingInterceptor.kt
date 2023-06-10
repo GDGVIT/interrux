@@ -6,19 +6,26 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import java.nio.charset.Charset
 
-class LoggingInterceptor: Interceptor {
+class LoggingInterceptor(private val loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY) : Interceptor {
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = loggingLevel
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        Log.d("LoggingInterceptor", "Request: ")
-        loggingInterceptor.intercept(chain)
-        val response = chain.proceed(request)
-        Log.d("LoggingInterceptor", "Response: ")
-        response.close()
-        loggingInterceptor.intercept(chain)
+
+        // Log the request details
+        Log.d("LoggingInterceptor", "Request URL: ${request.url}")
+        Log.d("LoggingInterceptor", "Request Method: ${request.method}")
+        Log.d("LoggingInterceptor", "Request Headers: ${request.headers}")
+        Log.d("LoggingInterceptor", "Request Body: ${request.body}")
+
+        // Log the response details
+        val response = loggingInterceptor.intercept(chain)
+        Log.d("LoggingInterceptor", "Response Code: ${response.code}")
+        Log.d("LoggingInterceptor", "Response Headers: ${response.headers}")
+        Log.d("LoggingInterceptor", "Response Body: ${response.body}")
+
         return response
     }
 }
