@@ -3,19 +3,27 @@ package com.example.interrux
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class RequestResponseInterceptor(private val request_header_name: String , private val request_header_value: String,
-     private val response_header_name: String, private val response_header_value: String): Interceptor {
+class RequestResponseInterceptor(
+    private val requestHeaderName: String, private val requestHeaderValue: String,
+    private val responseHeaderName: String, private val responseHeaderValue: String,
+) : Interceptor {
+    init {
+        require(requestHeaderName.isNotBlank()) { "Request header name cannot be blank" }
+        require(requestHeaderValue.isNotBlank()) { "Request header value cannot be blank" }
+        require(responseHeaderName.isNotBlank()) { "Response header name cannot be blank" }
+        require(responseHeaderValue.isNotBlank()) { "Response header value cannot be blank" }
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val unchangedRequest = chain.request()
-        val modifiedRequest = unchangedRequest.newBuilder()
-                    .addHeader(request_header_name, request_header_value)
-                    .build()
-        val response =  chain.proceed(modifiedRequest)
+        val originalRequest = chain.request()
+        val modifiedRequest = originalRequest.newBuilder()
+            .addHeader(requestHeaderName, requestHeaderValue)
+            .build()
+        val response = chain.proceed(modifiedRequest)
         val modifiedResponse = response.newBuilder()
-            .addHeader(response_header_name, response_header_value)
+            .addHeader(responseHeaderName, responseHeaderValue)
             .build()
 
         return modifiedResponse
-
     }
 }
