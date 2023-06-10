@@ -1,16 +1,22 @@
 package com.example.interrux
 
+import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.util.concurrent.TimeUnit
 
-class CacheInterceptor(private val cacheSize: Long) : Interceptor {
+class CacheInterceptor(private val days: Int = 1) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val _request = chain.request()
-        val _cacheRequest = _request.newBuilder()
-            .addHeader("Cache-Control", "max-age=$cacheSize")
-        val request = _cacheRequest.build()
-        return chain.proceed(request)
+        val cacheControl = CacheControl.Builder()
+            .maxAge(days, TimeUnit.DAYS)
+            .build()
+        val response = chain.proceed(_request)
+
+        return response.newBuilder()
+            .header("Cache-Control", cacheControl.toString())
+            .build()
     }
 
 }
