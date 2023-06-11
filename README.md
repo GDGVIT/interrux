@@ -2,8 +2,8 @@
 <a href="https://dscvit.com">
 	<img width="400" src="https://user-images.githubusercontent.com/56252312/159312411-58410727-3933-4224-b43e-4e9b627838a3.png#gh-light-mode-only" alt="GDSC VIT"/>
 </a>
-	<h2 align="center"> Interrux </h2>
-	<h4 align="center"> Interrux is an Android Library which provides a comprehensive collection of interceptors designed to enhance the functionality of Android applications. It offers a wide range of interceptors that seamlessly integrate into Android projects to intercept and modify network requests and responses. These interceptors empower developers to implement essential features like authentication, logging, caching, error handling, and more, in a modular and reusable manner. <h4>
+	<h1 align="center">  Interrux </h1>
+	<h6 align="center"> Interrux is an Android Library which provides a comprehensive collection of interceptors designed to enhance the functionality of Android applications. It offers a wide range of interceptors that seamlessly integrate into Android projects to intercept and modify network requests and responses. These interceptors empower developers to implement essential features like authentication, logging, caching, error handling, and more, in a modular and reusable manner. <h6>
 </p>
 
 ---
@@ -38,18 +38,128 @@ Maven:
 ## Usage
 
 To start using Interrux, just plug in an interceptor to your OkHttp Client Builder:
-```bash
+```kotlin
 val client = OkHttpClient.Builder()
-                .addInterceptor(LoggingInterceptor())
+                .addInterceptor(/*Any of the Included Interceptors here*/)
+		.addInterceptor(/*Another Interceptor*/)
                 .build()
 ```
 
  
 ## Included Interceptors
-1. **AuthInterceptor**: An interceptor for handling authentication by adding authentication headers to outgoing requests.
-2. **LoggingInterceptor**: An interceptor for logging network requests and responses. It provides detailed logs for debugging, performance analysis, and troubleshooting purposes.
-3. **CacheInterceptor**: An interceptor for implementing caching mechanisms to store and retrieve responses from the cache. It reduces network traffic and improves performance by serving cached responses when appropriate.
-4. **ErrorHandlingInterceptor**: An interceptor for handling network errors and exceptions in a structured manner. It allows developers to define custom error handling logic for different types of errors.
+### 1. AuthInterceptor: 
+- An interceptor for handling authentication by adding authentication headers to outgoing requests. It intercepts network requests and adds an authorization header to the request using an authentication token. This interceptor also provides an optional token refresh functionality through a TokenRefreshListener interface.
+	
+#### Parameters
+
+The `AuthInterceptor` class accepts the following parameters:
+
+- `authToken` (required): A string representing the authentication token to be used in the authorization header.
+
+- `tokenRefreshListener` (optional): An implementation of the `TokenRefreshListener` interface. This listener is responsible for refreshing the authentication token when needed.
+
+
+#### Example	
+```kotlin
+// Create an instance of AuthInterceptor with the authentication token
+val authToken = "YOUR_AUTH_TOKEN"
+val myAuthInterceptor = AuthInterceptor(authToken, null)
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(myAuthInterceptor)
+    .build()
+```
+#### Token Refresh Feature
+```kotlin
+// Implement the TokenRefreshListener
+class MyTokenRefreshListener : AuthInterceptor.TokenRefreshListener {
+    override fun onTokenRefresh(): String {
+        // Logic to refresh the authentication token and return the new token
+    }
+}
+
+// Create an instance of AuthInterceptor with the authentication token and token refresh listener
+val authToken = "YOUR_AUTH_TOKEN"
+val tokenRefreshListener = MyTokenRefreshListener()
+val myAuthInterceptor = AuthInterceptor(authToken, tokenRefreshListener)
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(myAuthInterceptor)
+    .build()
+
+```
+	
+### 2. LoggingInterceptor
+
+The `LoggingInterceptor` class is an interceptor for logging network requests and responses. It captures and logs information about the request URL, method, headers, and body, as well as the response code, headers, and body.
+
+#### Example
+
+```kotlin
+// Create an instance of LoggingInterceptor 
+val loggingInterceptor = LoggingInterceptor()
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(loggingInterceptor)
+    .build()
+```
+- Please note that the LoggingInterceptor relies on the HttpLoggingInterceptor from the OkHttp library for logging functionality.
+	
+### 3. CacheInterceptor
+
+The `CacheInterceptor` class is an interceptor that provides caching functionality for network requests. It allows you to control the caching behavior of responses by adding the appropriate `Cache-Control` header to the outgoing requests.
+
+#### Parameters
+
+The `CacheInterceptor` class accepts the following parameters:
+
+- `days` (optional): An integer representing the number of days for which the response should be cached. It defaults to `1` day.
+
+#### Example
+
+```kotlin
+// Create an instance of CacheInterceptor with the desired caching duration
+val cachingDays = 1
+val cacheInterceptor = CacheInterceptor(cachingDays)
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(cacheInterceptor)
+    .build()
+```
+	
+### 4. ErrorInterceptor
+
+The `ErrorInterceptor` class is an interceptor that handles common HTTP error responses and provides error logging functionality. It intercepts network requests and their corresponding responses, checks the response code, and logs the appropriate error message based on the code.
+
+#### Parameters
+
+The `ErrorInterceptor` class accepts the following parameter:
+
+- `errorHandler` (optional): An implementation of the `ErrorHandler` interface. This handler is responsible for handling the errors and providing a custom error response. If not provided, the errors will only be logged using Android's `Log` class.
+
+#### Example
+
+```kotlin
+// Create an implementation of the ErrorHandler interface
+class MyErrorHandler : ErrorInterceptor.ErrorHandler {
+    override fun onError(errorCode: Int, errorMessage: String) {
+        // Handle the error based on the error code and message
+    }
+}
+
+// Create an instance of ErrorInterceptor with the custom error handler
+val errorHandler = MyErrorHandler()
+val errorInterceptor = ErrorInterceptor(errorHandler)
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(errorInterceptor)
+    .build()
+```
 
 
 
