@@ -2,13 +2,15 @@
 <a href="https://dscvit.com">
 	<img width="400" src="https://user-images.githubusercontent.com/56252312/159312411-58410727-3933-4224-b43e-4e9b627838a3.png#gh-light-mode-only" alt="GDSC VIT"/>
 </a>
-	<h1 align="center">  Interrux </h1>
+	 <h1 align="center">  Interrux </h1>
+	
+</p>
+<p align="center">
+<a href="https://dscvit.com">
+	<img width="200" src="https://github.com/rudrankbasant/interrux/assets/85751479/184ab411-7e2b-4340-8b45-690c71a47e36" alt="GDSC VIT"/>
+</a>
 	<h6 align="center"> Interrux is an Android Library which provides a comprehensive collection of interceptors designed to enhance the functionality of Android applications. It offers a wide range of interceptors that seamlessly integrate into Android projects to intercept and modify network requests and responses. These interceptors empower developers to implement essential features like authentication, logging, caching, error handling, and more, in a modular and reusable manner. <h6>
 </p>
-
----
-
-
 
 ## Key Features
 - [ ]  Modularity: The library offers a set of independent interceptors, allowing developers to selectively choose and combine the interceptors that suit their specific requirements. Each interceptor can be used individually or in combination with other interceptors as per the desired functionality.
@@ -161,8 +163,79 @@ val client = OkHttpClient.Builder()
     .build()
 ```
 
+### 5. RequestInterceptor
 
+The `RequestInterceptor` class is an interceptor which allows modification of HTTP requests and their corresponding responses. It is used to add a custom header to outgoing requests.
 
+#### Parameters
+
+The `RequestInterceptor` class accepts the following parameters:
+
+- `headerName`: The name of the header to be added to the request. 
+- `headerValue`: The value of the header to be added to the request.
+
+### Example
+
+```kotlin
+// Create an instance of RequestInterceptor
+val requestInterceptor = RequestInterceptor("CustomHeader", "CustomValue")
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(requestInterceptor)
+    .build()
+```
+### 6. ResponseInterceptor
+
+The `ResponseInterceptor` class is an interceptor which allows modification of HTTP responses. It is used to add a custom header to the response.
+
+#### Parameters
+
+The `ResponseInterceptor` class accepts the following parameters:
+
+- `headerName`: The name of the header to be added to the response. 
+- `headerValue`: The value of the header to be added to the response. 
+
+#### Example
+
+```kotlin
+// Create an instance of ResponseInterceptor
+val responseInterceptor = ResponseInterceptor("CustomHeader", "CustomValue")
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(responseInterceptor)
+    .build()
+```
+
+### 7. RequestResponseInterceptor
+
+The `RequestResponseInterceptor` class is an interface which allows modification of both HTTP requests and responses. It is used to add custom headers to both outgoing requests and incoming responses.
+
+#### Parameters
+
+The `RequestResponseInterceptor` class accepts the following parameters:
+
+- `requestHeaderName`: The name of the header to be added to the request.
+- `requestHeaderValue`: The value of the header to be added to the request. 
+- `responseHeaderName`: The name of the header to be added to the response. 
+- `responseHeaderValue`: The value of the header to be added to the response. 
+
+#### Example
+
+```kotlin
+// Create an instance of RequestResponseInterceptor
+val requestResponseInterceptor = RequestResponseInterceptor(
+    "RequestHeader", "RequestValue",
+    "ResponseHeader", "ResponseValue"
+)
+
+// Add the interceptor to your OkHttp client
+val client = OkHttpClient.Builder()
+    .addInterceptor(requestResponseInterceptor)
+    .build()
+
+```
 ## Developer
 
 <table>
