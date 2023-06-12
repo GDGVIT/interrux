@@ -8,11 +8,11 @@ import java.util.concurrent.TimeUnit
 class CacheInterceptor(private val days: Int = 1) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val _request = chain.request()
+        val request = chain.request()
         val cacheControl = CacheControl.Builder()
             .maxAge(days, TimeUnit.DAYS)
             .build()
-        val response = chain.proceed(_request)
+        val response = chain.proceed(request)
 
         return response.newBuilder()
             .header("Cache-Control", cacheControl.toString())

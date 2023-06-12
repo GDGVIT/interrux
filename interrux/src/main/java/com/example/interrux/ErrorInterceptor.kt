@@ -3,7 +3,7 @@ package com.example.interrux
 import android.util.Log
 import okhttp3.Interceptor
 
-class ErrorInterceptor(private val errorHandler: ErrorHandler?): Interceptor {
+class ErrorInterceptor(private val errorHandler: ErrorHandler?) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request()
         val response = chain.proceed(request)
@@ -29,12 +29,12 @@ class ErrorInterceptor(private val errorHandler: ErrorHandler?): Interceptor {
         return response
     }
 
-    private fun logError(errorCode:Int, errorMessage: String) {
+    private fun logError(errorCode: Int, errorMessage: String) {
         errorHandler?.onError(errorCode, errorMessage)
         Log.e("ErrorInterceptor", "Error $errorCode $errorMessage")
     }
 
     interface ErrorHandler {
-        fun onError(errorCode: Int,errorMessage: String)
+        fun onError(errorCode: Int, errorMessage: String)
     }
 }
