@@ -22,10 +22,11 @@
 	- [Request Response Interceptor](#7-requestresponseinterceptor)
 - [Developer](#developer)	
 ## Key Features
-- [X]  Modularity: The library offers a set of independent interceptors, allowing developers to selectively choose and combine the interceptors that suit their specific requirements. Each interceptor can be used individually or in combination with other interceptors as per the desired functionality.
-- [X]  Ease of Integration: The interceptors are designed to integrate seamlessly with popular HTTP client libraries used in Android, such as OkHttp or Retrofit. Developers can easily add the interceptors to their existing network stacks without major modifications.
-- [X]  Customizability: The interceptors provide configurable options, allowing developers to customize their behavior based on application-specific needs. Parameters such as logging levels, cache durations, error handling strategies, and authentication mechanisms can be tailored according to the requirements of the application.
-- [X]  Error Handling: The interceptors include error handling mechanisms to capture and process network errors in a structured way. Developers can define error handling strategies to handle exceptions, timeouts, and other network-related issues efficiently.
+- [X]  **Modularity**: The library offers a set of independent interceptors, allowing developers to selectively choose and combine the interceptors that suit their specific requirements. Each interceptor can be used individually or in combination with other interceptors as per the desired functionality.
+- [X]  **Ease of Integration**: The interceptors are designed to integrate seamlessly with popular HTTP client libraries used in Android, such as OkHttp or Retrofit. Developers can easily add the interceptors to their existing network stacks without major modifications.
+- [X]  **Customizability**: The interceptors provide configurable options, allowing developers to customize their behavior based on application-specific needs. Parameters such as logging levels, cache durations, error handling strategies, and authentication mechanisms can be tailored according to the requirements of the application.
+- [X]  **Error Handling**: The interceptors include error handling mechanisms to capture and process network errors in a structured way. Developers can define error handling strategies to handle exceptions, timeouts, and other network-related issues efficiently.
+
 <br>
 	
 ## Configure
@@ -57,7 +58,7 @@ val client = OkHttpClient.Builder()
  
 ## Included Interceptors
 ### 1. AuthInterceptor: 
-- An interceptor for handling authentication by adding authentication headers to outgoing requests. It intercepts network requests and adds an authorization header to the request using an authentication token. This interceptor also provides an optional token refresh functionality through a TokenRefreshListener interface.
+An interceptor for handling authentication by adding authentication headers to outgoing requests. It intercepts network requests and adds an authorization header to the request using an authentication token. This interceptor also provides an optional token refresh functionality through a TokenRefreshListener interface.
 	
 #### Parameters
 
@@ -115,7 +116,7 @@ val client = OkHttpClient.Builder()
     .addInterceptor(loggingInterceptor)
     .build()
 ```
-- Please note that the LoggingInterceptor relies on the HttpLoggingInterceptor from the OkHttp library for logging functionality.
+>**NOTE:** Please note that the LoggingInterceptor relies on the HttpLoggingInterceptor from the OkHttp library for logging functionality.
 	
 ### 3. CacheInterceptor
 
