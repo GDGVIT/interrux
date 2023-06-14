@@ -7,7 +7,6 @@ class ErrorInterceptor(private val errorHandler: ErrorHandler?) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request()
         val response = chain.proceed(request)
-
         when (response.code) {
             400 -> logError(response.code, "Bad Request")
             401 -> logError(response.code, "Unauthorized")
@@ -21,8 +20,10 @@ class ErrorInterceptor(private val errorHandler: ErrorHandler?) : Interceptor {
             504 -> logError(response.code, "Gateway Timeout")
 
             else -> {
-                val errorMessage = "Unknown Error"
-                logError(response.code, errorMessage)
+                if(response.code>=400) {
+                    val errorMessage = "Unknown Error"
+                    logError(response.code, errorMessage)
+                }
             }
         }
 
