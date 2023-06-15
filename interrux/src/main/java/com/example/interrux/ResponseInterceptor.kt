@@ -14,10 +14,8 @@ class ResponseInterceptor(private val headerName: String, private val headerValu
         val request = chain.request().newBuilder().build()
         val response = chain.proceed(request)
 
-        val modifiedResponse = response.newBuilder()
+        return response.newBuilder()
             .addHeader(headerName, headerValue)
             .build()
-
-        return modifiedResponse
     }
 }

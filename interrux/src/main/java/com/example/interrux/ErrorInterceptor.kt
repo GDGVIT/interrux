@@ -20,7 +20,7 @@ class ErrorInterceptor(private val errorHandler: ErrorHandler?) : Interceptor {
             504 -> logError(response.code, "Gateway Timeout")
 
             else -> {
-                if(response.code>=400) {
+                if (response.code >= 400) {
                     val errorMessage = "Unknown Error"
                     logError(response.code, errorMessage)
                 }

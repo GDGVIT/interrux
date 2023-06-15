@@ -2,7 +2,6 @@ package com.example.interrux
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -10,21 +9,21 @@ import java.net.HttpURLConnection
 
 class AuthInterceptor(
     private val _context: Context,
-    private val refreshAuthToken: ((String?) -> String)?
+    private val refreshAuthToken: ((String?) -> String)?,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val unAuthReq = chain.request()
         val token = getAccessToken(_context)
         val response = chain.proceed(makeNewRequest(token, unAuthReq))
 
-        if(response.code==HttpURLConnection.HTTP_UNAUTHORIZED){
-            synchronized(this){
+        if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            synchronized(this) {
                 val newToken = getAccessToken(_context)
                 if (newToken != token) {
                     response.close()
                     return chain.proceed(makeNewRequest(newToken, unAuthReq))
-                }else{
-                    if(refreshAuthToken!=null) {
+                } else {
+                    if (refreshAuthToken != null) {
                         val updatedAccessToken = getUpdateAuthToken(_context, refreshAuthToken)
                         response.close()
                         return chain.proceed(makeNewRequest(updatedAccessToken, unAuthReq))
@@ -57,7 +56,10 @@ class AuthInterceptor(
         return getSharedPreferences(context).getString("refresh_token", "") ?: ""
     }
 
-    private fun getUpdateAuthToken(context: Context, refreshAuthToken: (String?) -> String): String {
+    private fun getUpdateAuthToken(
+        context: Context,
+        refreshAuthToken: (String?) -> String,
+    ): String {
         val refreshToken = getRefreshToken(context)
         val newAccessToken = refreshAuthToken(refreshToken)
         saveTokens(context, newAccessToken, refreshToken)
