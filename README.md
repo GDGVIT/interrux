@@ -58,22 +58,34 @@ val client = OkHttpClient.Builder()
  
 ## Included Interceptors
 ### 1. AuthInterceptor: 
-An interceptor for handling authentication by adding authentication headers to outgoing requests. It intercepts network requests and adds an authorization header to the request using an authentication token. This interceptor also provides an optional token refresh functionality through a TokenRefreshListener interface.
+An interceptor for handling authentication by adding authentication headers to outgoing requests. It intercepts network requests and adds an authorization header to the request using an authentication token, and also provides an optional token refresh functionality.
 	
 #### Parameters
 
 The `AuthInterceptor` class accepts the following parameters:
 
-- `authToken` (required): A string representing the authentication token to be used in the authorization header.
+- `context : Context` (required): An instance of the Context class representing the Android application context. It is used to access shared preferences and other application-specific resources.
 
-- `tokenRefreshListener` (optional): An implementation of the `TokenRefreshListener` interface. This listener is responsible for refreshing the authentication token when needed.
+- `refreshAuthToken : ((String?) -> String)?` (optional): The class also provides an additional constructor that allows passing a refreshAuthToken lambda function for token refreshing. The parameter string provides the function with the refresh token saved using saveTokens() function.
 
+#### Methods
+
+##### saveTokens
+
+```kotlin
+fun saveTokens(accessToken: String, refreshToken: String)
+```
+##### Parameters
+
+- `accessToken: String`: A string representing the access token to be saved. This token is used for authentication and authorization purposes.
+- `refreshToken: String`: A string representing the refresh token to be saved. This token is used to obtain a new access token when the current one expires.
+
+The method will save these tokens in the shared preferences, allowing us to retrieve and use them later for authentication and token refreshing purposes.
 
 #### Example	
 ```kotlin
-// Create an instance of AuthInterceptor with the authentication token
-val authToken = "YOUR_AUTH_TOKEN"
-val myAuthInterceptor = AuthInterceptor(authToken, null)
+// Create an instance of AuthInterceptor with context
+val authInterceptor = AuthInterceptor(applicationContext)
 
 // Add the interceptor to your OkHttp client
 val client = OkHttpClient.Builder()
@@ -82,17 +94,16 @@ val client = OkHttpClient.Builder()
 ```
 #### Token Refresh Feature
 ```kotlin
-// Implement the TokenRefreshListener
-class MyTokenRefreshListener : AuthInterceptor.TokenRefreshListener {
-    override fun onTokenRefresh(): String {
-        // Logic to refresh the authentication token and return the new token
-    }
+
+// Create an instance of AuthInterceptor with context and custom lambda function
+val refreshAuthToken : (String?) -> String = {
+            refreshToken ->
+            // Refresh the access token using the provided refresh token
+	    // Implement your own logic for refreshing the token
+    	    // Return the new access token
 }
 
-// Create an instance of AuthInterceptor with the authentication token and token refresh listener
-val authToken = "YOUR_AUTH_TOKEN"
-val tokenRefreshListener = MyTokenRefreshListener()
-val myAuthInterceptor = AuthInterceptor(authToken, tokenRefreshListener)
+ val myAuthInterceptor = AuthInterceptor(applicationContext, refreshAuthToken)
 
 // Add the interceptor to your OkHttp client
 val client = OkHttpClient.Builder()
@@ -100,10 +111,19 @@ val client = OkHttpClient.Builder()
     .build()
 
 ```
-	
+#### Save Tokens
+```kotlin
+//Save tokens when received
+val accessToken = "sample_access_token"
+val refreshToken = "sample_refresh_token"
+
+myAuthInterceptor.saveTokens(accessToken, refreshToken)
+```
+
+
 ### 2. LoggingInterceptor
 
-The `LoggingInterceptor` class is an interceptor for logging network requests and responses. It captures and logs information about the request URL, method, headers, and body, as well as the response code, headers, and body.
+The `LoggingInterceptor` class is an interceptor for logging network requests and responses. It captures and logs information about the request URL, method, and headers as well as the response code, and headers.
 
 #### Example
 
@@ -132,7 +152,7 @@ The `CacheInterceptor` class accepts the following parameters:
 
 ```kotlin
 // Create an instance of CacheInterceptor with the desired caching duration
-val cachingDays = 1
+val cachingDays = 2
 val cacheInterceptor = CacheInterceptor(cachingDays)
 
 // Add the interceptor to your OkHttp client
@@ -143,7 +163,7 @@ val client = OkHttpClient.Builder()
 	
 ### 4. ErrorInterceptor
 
-The `ErrorInterceptor` class is an interceptor that handles common HTTP error responses and provides error logging functionality. It intercepts network requests and their corresponding responses, checks the response code, and logs the appropriate error message based on the code.
+The `ErrorInterceptor` class is an interceptor that handles common HTTP error responses and provides error logging functionality. It intercepts network requests and their corresponding responses, checks the response code, and logs and handles the appropriate error based on the code.
 
 #### Parameters
 
@@ -154,16 +174,15 @@ The `ErrorInterceptor` class accepts the following parameter:
 #### Example
 
 ```kotlin
-// Create an implementation of the ErrorHandler interface
-class MyErrorHandler : ErrorInterceptor.ErrorHandler {
-    override fun onError(errorCode: Int, errorMessage: String) {
-        // Handle the error based on the error code and message
-    }
+// Create an implementation of the ErrorHandler interface and define the onError function
+
+override fun onError(errorCode: Int, errorMessage: String) {
+// Handle the error based on the error code and message
 }
 
-// Create an instance of ErrorInterceptor with the custom error handler
-val errorHandler = MyErrorHandler()
-val errorInterceptor = ErrorInterceptor(errorHandler)
+
+// Create an instance of ErrorInterceptor
+val errorInterceptor = ErrorInterceptor(/*Pass the interface*/)
 
 // Add the interceptor to your OkHttp client
 val client = OkHttpClient.Builder()
