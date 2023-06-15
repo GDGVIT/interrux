@@ -10,14 +10,13 @@ import java.net.HttpURLConnection
 
 class AuthInterceptor(
     private val _context: Context,
-    private val refreshAuthToken: (() -> String)?
+    private val refreshAuthToken: ((String?) -> String)?
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val unAuthReq = chain.request()
         val token = getAccessToken(_context)
         val response = chain.proceed(makeNewRequest(token, unAuthReq))
 
-        Log.d("AuthInterceptor", "Response Code: ${response.code}")
         if(response.code==HttpURLConnection.HTTP_UNAUTHORIZED){
             synchronized(this){
                 val newToken = getAccessToken(_context)
@@ -25,13 +24,10 @@ class AuthInterceptor(
                     response.close()
                     return chain.proceed(makeNewRequest(newToken, unAuthReq))
                 }else{
-                    if(refreshAuthToken!=null){
+                    if(refreshAuthToken!=null) {
                         val updatedAccessToken = getUpdateAuthToken(_context, refreshAuthToken)
-                        Log.d("AuthInterceptor", "Updated Access Token: $updatedAccessToken")
                         response.close()
-                        val newResponse  = chain.proceed(makeNewRequest(updatedAccessToken, unAuthReq))
-                        Log.d("AuthInterceptor", "New Response Code: ${response.code}")
-                        return newResponse
+                        return chain.proceed(makeNewRequest(updatedAccessToken, unAuthReq))
                     }
                 }
 
@@ -57,14 +53,13 @@ class AuthInterceptor(
         return getSharedPreferences(context).getString("access_token", "") ?: ""
     }
 
-    fun getRefreshToken(context: Context): String {
+    private fun getRefreshToken(context: Context): String {
         return getSharedPreferences(context).getString("refresh_token", "") ?: ""
     }
 
-    private fun getUpdateAuthToken(context: Context, refreshAuthToken: () -> String): String {
+    private fun getUpdateAuthToken(context: Context, refreshAuthToken: (String?) -> String): String {
         val refreshToken = getRefreshToken(context)
-        val newAccessToken = refreshAuthToken()
-        Log.d("AuthInterceptor", "New Access Token: $newAccessToken")
+        val newAccessToken = refreshAuthToken(refreshToken)
         saveTokens(context, newAccessToken, refreshToken)
         return newAccessToken
     }
