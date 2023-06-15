@@ -1,3 +1,9 @@
+<p align="center">
+<a href="https://dscvit.com">
+	<img width="400" src="https://user-images.githubusercontent.com/56252312/159312411-58410727-3933-4224-b43e-4e9b627838a3.png#gh-light-mode-only" alt="GDSC VIT"/>
+</a>
+	
+---
 <h1 align="center">  Interrux </h1>
 <p align="center">
 	
