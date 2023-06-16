@@ -7,10 +7,13 @@ import okhttp3.Request
 import okhttp3.Response
 import java.net.HttpURLConnection
 
-class AuthInterceptor(
-    private val _context: Context,
-    private val refreshAuthToken: ((String?) -> String)?,
-) : Interceptor {
+class AuthInterceptor(private val _context: Context) : Interceptor {
+
+    private var refreshAuthToken: ((String?) -> String)? = null
+    constructor(context: Context, refreshAuthToken: ((String?) -> String)) : this(context) {
+        this.refreshAuthToken = refreshAuthToken
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val unAuthReq = chain.request()
         val token = getAccessToken(_context)
@@ -24,7 +27,7 @@ class AuthInterceptor(
                     return chain.proceed(makeNewRequest(newToken, unAuthReq))
                 } else {
                     if (refreshAuthToken != null) {
-                        val updatedAccessToken = getUpdateAuthToken(_context, refreshAuthToken)
+                        val updatedAccessToken = getUpdateAuthToken(_context, refreshAuthToken!!)
                         response.close()
                         return chain.proceed(makeNewRequest(updatedAccessToken, unAuthReq))
                     }
@@ -62,12 +65,12 @@ class AuthInterceptor(
     ): String {
         val refreshToken = getRefreshToken(context)
         val newAccessToken = refreshAuthToken(refreshToken)
-        saveTokens(context, newAccessToken, refreshToken)
+        saveTokens(newAccessToken, refreshToken)
         return newAccessToken
     }
 
-    fun saveTokens(context: Context, accessToken: String, refreshToken: String) {
-        getSharedPreferences(context).edit()
+    fun saveTokens(accessToken: String, refreshToken: String) {
+        getSharedPreferences(_context).edit()
             .putString("access_token", accessToken)
             .putString("refresh_token", refreshToken)
             .apply()
