@@ -5,8 +5,11 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
-class CacheInterceptor(private val days: Int = 1) : Interceptor {
-
+class CacheInterceptor() : Interceptor {
+    private var days: Int = 1
+    constructor(days: Int) : this() {
+        this.days = days
+    }
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val cacheControl = CacheControl.Builder()
