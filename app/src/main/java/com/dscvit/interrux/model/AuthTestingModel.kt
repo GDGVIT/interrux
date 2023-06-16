@@ -6,5 +6,5 @@ data class AuthTestingModel(
     val id: Int,
     val name: String,
     val password: String,
-    val role: String
+    val role: String,
 )

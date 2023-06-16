@@ -10,7 +10,10 @@ import com.dscvit.interrux.model.LoginReq
 import com.dscvit.interrux.model.LoginResponse
 import com.dscvit.interrux.model.RefreshRequest
 import okhttp3.OkHttpClient
-import retrofit2.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
@@ -20,9 +23,7 @@ class MainActivity : AppCompatActivity(), ErrorInterceptor.ErrorHandler {
         setContentView(R.layout.activity_main)
 
 
-
-        val refreshAuthToken : (String?) -> String = {
-            refreshToken ->
+        val refreshAuthToken: (String?) -> String = { refreshToken ->
             val retrofitBuilder = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://api.escuelajs.co/api/v1/")
@@ -58,15 +59,18 @@ class MainActivity : AppCompatActivity(), ErrorInterceptor.ErrorHandler {
             .build()
         val apiInterface = retrofitBuilder.create(ApiInterface::class.java)
         val userCredentials = LoginReq(
-            "john@mail.com","changeme"
+            "john@mail.com", "changeme"
         )
 
         apiInterface.login(userCredentials).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 Log.d("MainActivity", "onLoginResponse: $response")
-                if(response.body()!=null){
-                    Log.d("Token",response.body()!!.access_token)
-                    authInterceptor.saveTokens(response.body()!!.access_token, response.body()!!.refresh_token)
+                if (response.body() != null) {
+                    Log.d("Token", response.body()!!.access_token)
+                    authInterceptor.saveTokens(
+                        response.body()!!.access_token,
+                        response.body()!!.refresh_token
+                    )
                     getProfile(authInterceptor)
                 }
             }
@@ -77,6 +81,7 @@ class MainActivity : AppCompatActivity(), ErrorInterceptor.ErrorHandler {
 
         })
     }
+
     private fun getProfile(authInterceptor: AuthInterceptor) {
         val retrofitBuilder = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -95,7 +100,7 @@ class MainActivity : AppCompatActivity(), ErrorInterceptor.ErrorHandler {
 
             override fun onResponse(
                 call: Call<AuthTestingModel>,
-                response: Response<AuthTestingModel>
+                response: Response<AuthTestingModel>,
             ) {
                 Log.d("MainActivity", "onResponse2: " + response.body())
             }

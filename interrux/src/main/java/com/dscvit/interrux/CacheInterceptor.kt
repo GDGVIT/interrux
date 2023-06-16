@@ -7,9 +7,11 @@ import java.util.concurrent.TimeUnit
 
 class CacheInterceptor() : Interceptor {
     private var days: Int = 1
+
     constructor(days: Int) : this() {
         this.days = days
     }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val cacheControl = CacheControl.Builder()

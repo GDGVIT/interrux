@@ -6,9 +6,11 @@ import okhttp3.Interceptor
 class ErrorInterceptor() : Interceptor {
 
     private var errorHandler: ErrorHandler? = null
+
     constructor(errorHandler: ErrorHandler?) : this() {
-        this.errorHandler=errorHandler
+        this.errorHandler = errorHandler
     }
+
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request()
         val response = chain.proceed(request)
