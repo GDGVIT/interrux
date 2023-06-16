@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.interrux'
+    namespace 'com.dscvit.interrux'
     compileSdk 33
 
     defaultConfig {
