@@ -1,4 +1,4 @@
-package com.example.interrux
+package com.dscvit.interrux
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,6 +10,7 @@ import java.net.HttpURLConnection
 class AuthInterceptor(private val _context: Context) : Interceptor {
 
     private var refreshAuthToken: ((String?) -> String)? = null
+
     constructor(context: Context, refreshAuthToken: ((String?) -> String)) : this(context) {
         this.refreshAuthToken = refreshAuthToken
     }

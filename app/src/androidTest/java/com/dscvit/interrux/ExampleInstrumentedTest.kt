@@ -1,4 +1,4 @@
-package com.example.interrux
+package com.dscvit.interrux
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.interrux.test", appContext.packageName)
+        assertEquals("com.example.interrux", appContext.packageName)
     }
 }

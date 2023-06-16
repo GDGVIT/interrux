@@ -1,4 +1,4 @@
-package com.example.interrux
+package com.dscvit.interrux
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

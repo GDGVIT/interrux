@@ -1,4 +1,4 @@
-package com.example.interrux
+package com.dscvit.interrux
 
 import android.util.Log
 import okhttp3.Interceptor
